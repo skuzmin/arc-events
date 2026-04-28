@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"arc-events/cache"
 	"compress/gzip"
 	"encoding/json"
 	"io"
@@ -53,5 +54,6 @@ func CorsMiddleware(next http.Handler) http.Handler {
 
 func GetArcEvents(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ArcEventsHandler())
+	data := cache.GetInstance().Get()
+	json.NewEncoder(w).Encode(data)
 }

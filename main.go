@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	handlers.ArcEventsHandler()
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /arc-events", handlers.GetArcEvents)
 	fmt.Println("Server is running on localhost:8080")

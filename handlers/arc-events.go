@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"arc-events/cache"
 	"arc-events/models"
 )
 
@@ -150,8 +151,24 @@ func extractJSON(body []byte, re *regexp.Regexp, name string, dst any) {
 	}
 }
 
-func ArcEventsHandler() models.ArcDataResponse {
+func getArcEvents() {
 	arcData := getArcData()
 	events, metadata := extractArcEventsData(arcData)
-	return createArcDataResponse(events, metadata)
+	result := createArcDataResponse(events, metadata)
+	cache.GetInstance().Set(result)
+}
+
+func startCacheUpdate() {
+	ticker := time.NewTicker(1 * time.Hour)
+
+	go func() {
+		for range ticker.C {
+			getArcEvents()
+		}
+	}()
+}
+
+func ArcEventsHandler() {
+	getArcEvents()
+	startCacheUpdate()
 }
