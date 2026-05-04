@@ -4,3 +4,11 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+
+  nginx:
+    build: ./static
+    ports:
+      - "80:80"
+    volumes:
+      - ./static/assets:/var/www/static/icons:ro
+    restart: unless-stopped

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 )
 
 const URL = "https://arcraiders.com/map-conditions"
+const ICONS_URL = "http://localhost/icons"
 
 var (
 	reMapNames   = regexp.MustCompile(`"mapNames":(\[[^\]]*\])`)
@@ -105,10 +107,12 @@ func extractArcEventsData(body []byte) ([]models.ArcEvent, models.ArcMetadata) {
 
 	metadata.Conditions = make(map[int]models.ConditionDetails, len(conditions))
 	for i, c := range conditions {
+		c.Icon = strings.Join(strings.Split(strings.ToLower(c.Name), " "), "-") + ".svg"
 		metadata.Conditions[i] = c
 	}
 
 	metadata.ServerTime = serverTime
+	metadata.IconsUrl = ICONS_URL
 
 	return events, metadata
 }
